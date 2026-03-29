@@ -10,12 +10,23 @@ def get_items():
     return db.query(sql)
 
 def get_item(item_id):
-    sql = """SELECT items.title,
-    items.description,
-    items.date,
-    items.time,
-    users.username
-    from items, users
-    where items.user_id = users.id AND items.id = ?
+    sql = """SELECT items.id,
+        items.title,
+        items.description,
+        items.date,
+        items.time,
+        users.id user_id,
+        users.username
+    FROM items, users
+    WHERE items.user_id = users.id AND items.id = ?
     """
     return db.query(sql, [item_id])[0]
+
+def edit_event(item_id, title, description, date, time, location):
+    sql = """UPDATE items SET title = ?,
+                                description = ?,
+                                date = ?,
+                                time = ?,
+                                location = ?
+                            WHERE id = ?"""
+    db.execute(sql, [title, description, date, time, location, item_id])

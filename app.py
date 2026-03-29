@@ -18,10 +18,16 @@ def index():
     all_items = items.get_items()   
     return render_template("index.html", items=all_items)
 
-@app.route("/item/<int:item>")
+@app.route("/item/<int:item_id>")
 def page(item_id):
     item = items.get_item(item_id)
-    return render_template("show_item.html", item = item)
+    return render_template("show_item.html", item=item)
+
+
+@app.route("/update_event/<int:item_id>")
+def update_event(item_id):
+    item = items.get_item(item_id)
+    return render_template("edit_item.html", item=item)
 
 
 @app.route("/new_item")
@@ -39,6 +45,19 @@ def create_item():
     items.add_item(title, description, date, time, location, user_id)
 
     return redirect("/")
+
+@app.route("/update_event/<int:item_id>", methods=["POST"])
+def edit_event(item_id):
+    item_id = request.form["item_id"]
+    title = request.form["title"]
+    description = request.form["description"]
+    time = request.form["time"]
+    date = request.form["date"]
+    location = request.form["location"]
+    items.edit_event(item_id, title, description, date, time, location)
+
+    return redirect("/item/" + str(item_id))
+
 
 @app.route("/register")
 def register():
