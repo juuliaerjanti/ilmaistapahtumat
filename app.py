@@ -60,10 +60,16 @@ def update_event(event_id):
         if event["user_id"] != session["user_id"]:
             abort(403)
         title = request.form["title"]
+        if not title or len(title) > 60:
+            abort(403)
         description = request.form["description"]
+        if not description or len(description) > 1500:
+            abort(403)
         time = request.form["time"]
         date = request.form["date"]
         location = request.form["location"]
+        if not location or len(location) > 100:
+            abort(403)
 
         events.edit_event(event_id, title, description, date, time, location)
 
