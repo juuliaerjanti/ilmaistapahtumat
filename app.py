@@ -77,7 +77,6 @@ def remove_event(event_id):
     if "user_id" not in session:
         flash("Sinun täytyy olla kirjautuneena poistaaksesi tapahtumia.")
         return redirect("/login")
-
     event = events.get_event(event_id)
 
     if event is None:
