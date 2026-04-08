@@ -31,6 +31,8 @@ def find_event():
 @app.route("/event/<int:event_id>")
 def page(event_id):
     event = events.get_event(event_id)
+    if not event:
+        abort(404)
     return render_template("show_event.html", event=event)
 
 
@@ -38,6 +40,8 @@ def page(event_id):
 def update_event(event_id):
     if request.method == "GET":
         event = events.get_event(event_id)
+        if not event:
+            abort(404)
         if event["user_id"] != session["user_id"]:
             abort(403)
         return render_template("edit_event.html", event=event)
@@ -45,6 +49,8 @@ def update_event(event_id):
     if request.method == "POST":
         event_id = request.form["event_id"]
         event = events.get_event(event_id)
+        if not event:
+            abort(404)
         if event["user_id"] != session["user_id"]:
             abort(403)
         title = request.form["title"]
@@ -78,8 +84,7 @@ def remove_event(event_id):
         flash("Sinun täytyy olla kirjautuneena poistaaksesi tapahtumia.")
         return redirect("/login")
     event = events.get_event(event_id)
-
-    if event is None:
+    if not event:
         abort(404)
 
     if event["user_id"] != session["user_id"]:

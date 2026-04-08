@@ -21,7 +21,9 @@ def get_event(event_id):
     FROM events, users
     WHERE events.user_id = users.id AND events.id = ?
     """
-    return db.query(sql, [event_id])[0]
+    result = db.query(sql, [event_id])
+    return result[0] if result else None
+
 
 def edit_event(event_id, title, description, date, time, location):
     sql = """UPDATE events SET title = ?,
