@@ -9,8 +9,13 @@ import config
 
 import events
 
+con = sqlite3.connect('database.db', timeout=10)
 app = Flask(__name__)
 app.secret_key = config.secret_key
+
+def require_login():
+    if "user_id" not in session:
+        abort(403)
 
 
 @app.route("/")
@@ -38,6 +43,7 @@ def page(event_id):
 
 @app.route("/update_event/<int:event_id>", methods=["GET", "POST"])
 def update_event(event_id):
+    require_login()
     if request.method == "GET":
         event = events.get_event(event_id)
         if not event:
@@ -65,10 +71,13 @@ def update_event(event_id):
 
 @app.route("/new_event")
 def new_event():
+    require_login()
     return render_template("new_event.html")
 
 @app.route("/create_event", methods=["POST"])
 def create_event():
+    require_login()
+
     title = request.form["title"]
     description = request.form["description"]
     time = request.form["time"]
@@ -80,6 +89,7 @@ def create_event():
     return redirect("/")
 @app.route("/remove_event/<int:event_id>", methods=["GET", "POST"])
 def remove_event(event_id):
+    require_login()
     if "user_id" not in session:
         flash("Sinun täytyy olla kirjautuneena poistaaksesi tapahtumia.")
         return redirect("/login")
@@ -132,10 +142,8 @@ def create():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-
     if request.method == "GET":
         return render_template("login.html")
-
 
     if request.method == 'POST':
         username = request.form["username"]
