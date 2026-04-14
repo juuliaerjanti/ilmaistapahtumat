@@ -19,7 +19,7 @@
     {{ event.description }}
   </p>
   <p>
-    Päivämäärä: {{ event.date }}
+    Päivämäärä (vvvv-kk-pp): {{ event.date }}
   </p>
     <p>
     Sijainti: {{ event.location }}
@@ -28,7 +28,7 @@
     Kellonaika: {{ event.time }}
   </p>
   <p>
-    Järjestäjä: {{ event.username }}
+    Järjestäjä: <a href="/user/{{ event.user_id }}"> {{ event.username }}</a>
   </p>
   <p>
     <a href="/">Takaisin</a>

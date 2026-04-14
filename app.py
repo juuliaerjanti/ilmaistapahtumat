@@ -3,11 +3,10 @@ from flask import Flask
 from flask import abort, redirect, render_template, request, session, flash
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
-
 import db
 import config
-
 import events
+import users
 
 con = sqlite3.connect('database.db', timeout=10)
 app = Flask(__name__)
@@ -22,6 +21,16 @@ def require_login():
 def index():
     all_events = events.get_events()
     return render_template("index.html", events=all_events)
+
+@app.route("/user/<int:user_id>")
+def show_user(user_id):
+    user = users.get_user(user_id)
+    if not user:
+        abort(404)
+    events = users.get_events(user_id)
+
+    return render_template("show_user.html", user=user, events=events)
+
 
 @app.route("/find_event")
 def find_event():
