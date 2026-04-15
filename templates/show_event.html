@@ -30,6 +30,16 @@
   <p>
     Järjestäjä: <a href="/user/{{ event.user_id }}"> {{ event.username }}</a>
   </p>
+  {% if classes %}
+  <p>
+    Luokat:
+    <ul>
+      {% for class in classes %}
+      <li>{{ class.title }}</li>
+      {% endfor %}
+    </ul>
+  </p>
+  {% endif %}
   <p>
     <a href="/">Takaisin</a>
   </p>

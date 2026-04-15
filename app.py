@@ -41,11 +41,12 @@ def find_event():
     return render_template("find_event.html", query=query, results=results)
 
 @app.route("/event/<int:event_id>")
-def page(event_id):
+def page(event_id): # show_event(event_id):
     event = events.get_event(event_id)
     if not event:
         abort(404)
-    return render_template("show_event.html", event=event)
+    classes = events.get_classes(event_id)
+    return render_template("show_event.html", event=event, classes=classes)
 
 
 @app.route("/update_event/<int:event_id>", methods=["GET", "POST"])
@@ -103,10 +104,17 @@ def create_event():
     location = request.form["location"]
     if not location or len(location) > 100:
         abort(403)
+
+    classes = []
+    section = request.form['section']
+    if section:
+        classes.append(section)
+
     user_id = session["user_id"]
-    events.add_event(title, description, date, time, location, user_id)
+    events.add_event(title, description, date, time, location, user_id, classes)
 
     return redirect("/")
+
 @app.route("/remove_event/<int:event_id>", methods=["GET", "POST"])
 def remove_event(event_id):
     require_login()

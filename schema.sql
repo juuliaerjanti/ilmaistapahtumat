@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
     username TEXT UNIQUE,
@@ -13,4 +12,11 @@ CREATE TABLE IF NOT EXISTS events (
     time TEXT,
     location TEXT,
     user_id INTEGER REFERENCES users
+);
+
+CREATE TABLE IF NOT EXISTS event_classes (
+    id INTEGER PRIMARY KEY,
+    event_id INETGER REFERENCRS events,
+    title TEXT,
+    value TEXT
 );

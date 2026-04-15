@@ -1,9 +1,18 @@
 import db
 
-def add_event(title, description, date, time, location, user_id):
+def add_event(title, description, date, time, location, user_id, classes):
     sql = "INSERT INTO events (title, description, date, time, location, user_id) VALUES (?, ?, ?, ?, ?, ?)"
-    result = db.execute(sql, [title, description, date, time, location, user_id])
-    return result[0] if result else None
+    db.execute(sql, [title, description, date, time, location, user_id])
+
+    event_id = db.last_insert_id()
+
+    sql = "INSERT INTO event_classes (event_id, title) VALUES (?, ?)"
+    for title in classes:
+        db.execute(sql, [event_id, title])
+
+def get_classes(event_id):
+    sql = "SELECT title FROM event_classes WHERE event_id = ?"
+    return db.query(sql, [event_id])
 
 def get_events():
     sql = "SELECT id, title FROM events ORDER BY id DESC"

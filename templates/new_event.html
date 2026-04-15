@@ -2,11 +2,11 @@
 <html>
 
 <head>
-  <title>Uusi ilmoitus</title>
+  <title>Uusi tapahtuma</title>
 </head>
 
 <body>
-  <h1>Uusi ilmoitus</h1>
+  <h1>Uusi tapahtuma</h1>
   <form action="/create_event" method="post">
     <p>
       Otsikko: <br />
@@ -27,6 +27,26 @@
     <p>
       Sijainti: <br />
       <input type="text" name="location" size="50" maxlength="100" required />
+    </p>
+    <p>
+      Tapahtuman tyyppi: <br />
+      <select name="section">
+        <option value="">(valitse)</option>
+        <option value="päihteetön">päihteetön</option>
+        <option value="musiikki">musiikki</option>
+        <option value="teatteri">teatteri</option>
+        <option value="urheilu">urheilu</option>
+        <option value="ruoka">ruoka</option>
+        <option value="tanssi">tanssi</option>
+        <option value="maalaustaide">maalaustaide</option>
+        <option value="lautapelit">lautapelit</option>
+        <option value="kirjallisuus">kirjallisuus</option>
+        <option value="elokuvat">elokuvat</option>
+        <option value="keramiikka">keramiikka</option>
+        <option value="luonto">luonto</option>
+        <option value="muu">muu</option>
+
+      </select>
     </p>
 
     
