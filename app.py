@@ -5,6 +5,7 @@ import db
 import config
 import events
 import users
+import comments
 
 con = sqlite3.connect('database.db', timeout=10)
 app = Flask(__name__)
@@ -26,8 +27,9 @@ def show_user(user_id):
     if not user:
         abort(404)
     events = users.get_events(user_id)
+    user_comments = users.get_user_comments(user_id)
 
-    return render_template("show_user.html", user=user, events=events)
+    return render_template("show_user.html", user=user, events=events, user_comments=user_comments)
 
 
 @app.route("/find_event")
@@ -41,12 +43,13 @@ def find_event():
     return render_template("find_event.html", query=query, results=results)
 
 @app.route("/event/<int:event_id>")
-def page(event_id): # show_event(event_id):
+def page(event_id):
     event = events.get_event(event_id)
     if not event:
         abort(404)
     classes = events.get_classes(event_id)
-    return render_template("show_event.html", event=event, classes=classes)
+    comments_list = comments.get_comments(event_id)
+    return render_template("show_event.html", event=event, classes=classes, comments=comments_list)
 
 
 @app.route("/update_event/<int:event_id>", methods=["GET", "POST"])
@@ -189,3 +192,10 @@ def logout():
         del session["username"]
     return redirect("/")
 
+@app.route("/add_comment/<int:event_id>", methods=["POST"])
+def add_comment(event_id):
+    require_login()
+    comment = request.form["comment"]
+    user_id = session["user_id"]
+    comments.add_comment(event_id, user_id, comment)
+    return redirect("/event/" + str(event_id))

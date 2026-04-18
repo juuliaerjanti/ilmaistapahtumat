@@ -17,6 +17,13 @@
     {% endfor %}
   </ul>
 
+  <h2>Käyttäjän lähettämät kommentit</h2>
+  <ul>
+    {% for comment in user_comments %}
+      <li><strong>{{ comment.title }}:</strong> {{ comment.comment }}</li>
+    {% endfor %}
+  </ul>
+
   <p>
     <a href="/">Takaisin</a>
   </p>

@@ -40,6 +40,16 @@
     </ul>
   </p>
   {% endif %}
+  <h2>Kommentit</h2>
+  <ul>
+    {% for comment in comments %}
+      <li><strong>{{ comment.username }}:</strong> {{ comment.comment }}</li>
+    {% endfor %}
+  </ul>
+  <form action="/add_comment/{{ event.id }}" method="POST">
+    <textarea name="comment" rows="3" cols="50" required></textarea>
+    <input type="submit" value="Lisää kommentti">
+  </form>
   <p>
     <a href="/">Takaisin</a>
   </p>

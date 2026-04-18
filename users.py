@@ -27,3 +27,11 @@ def check_login(username, password):
         return user_id
     else:
         return None
+
+def get_user_comments(user_id):
+    sql = """SELECT comments.comment, events.title, comments.created_at
+             FROM comments
+             JOIN events ON comments.event_id = events.id
+             WHERE comments.user_id = ?
+             ORDER BY comments.created_at DESC"""
+    return db.query(sql, [user_id])

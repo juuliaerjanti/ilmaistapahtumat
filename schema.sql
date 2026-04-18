@@ -20,3 +20,11 @@ CREATE TABLE IF NOT EXISTS event_classes (
     title TEXT,
     value TEXT
 );
+
+CREATE TABLE IF NOT EXISTS comments (
+    id INTEGER PRIMARY KEY,
+    event_id INTEGER REFERENCES events,
+    user_id INTEGER REFERENCES users,
+    comment TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
