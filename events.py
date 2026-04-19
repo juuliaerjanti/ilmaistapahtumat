@@ -57,4 +57,3 @@ def find_events(query):
             ORDER BY id DESC"""
     res = "%" + query + "%"
     return db.query(sql, [res, res, res, res])
-

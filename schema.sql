@@ -17,8 +17,7 @@ CREATE TABLE IF NOT EXISTS events (
 CREATE TABLE IF NOT EXISTS event_classes (
     id INTEGER PRIMARY KEY,
     event_id INETGER REFERENCRS events,
-    title TEXT,
-    value TEXT
+    title TEXT
 );
 
 CREATE TABLE IF NOT EXISTS comments (

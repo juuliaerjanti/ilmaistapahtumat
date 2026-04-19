@@ -74,7 +74,7 @@ def update_event(event_id):
         if not title or len(title) > 60:
             abort(403)
         description = request.form["description"]
-        if not description or len(description) > 1500:
+        if not description or len(description) > 5000:
             abort(403)
         time = request.form["time"]
         date = request.form["date"]
@@ -100,7 +100,7 @@ def create_event():
     if not title or len(title) > 60:
         abort(403)
     description = request.form["description"]
-    if not description or len(description) > 1500:
+    if not description or len(description) > 5000:
         abort(403)
     time = request.form["time"]
     date = request.form["date"]
@@ -108,10 +108,7 @@ def create_event():
     if not location or len(location) > 100:
         abort(403)
 
-    classes = []
-    section = request.form['section']
-    if section:
-        classes.append(section)
+    classes = request.form.getlist('section')
 
     user_id = session["user_id"]
     events.add_event(title, description, date, time, location, user_id, classes)

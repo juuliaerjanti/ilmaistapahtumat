@@ -14,7 +14,7 @@
     </p>
     <p>
       Kuvaus: <br />
-      <textarea  name ="description" rows="10" cols="70" maxlength="1500" required ></textarea>
+      <textarea  name ="description" rows="10" cols="70" maxlength="5000" required ></textarea>
     </p>
     <p>
       Päivämäärä: <br />
@@ -30,9 +30,9 @@
     </p>
     <p>
       Tapahtuman tyyppi: <br />
-      <select name="section">
+      <select name="section" multiple>
         <option value="">(valitse)</option>
-        <option value="päihteetön">päihteetön</option>
+        <option value="askartelu">päihteetön</option>
         <option value="musiikki">musiikki</option>
         <option value="teatteri">teatteri</option>
         <option value="urheilu">urheilu</option>
@@ -45,7 +45,6 @@
         <option value="keramiikka">keramiikka</option>
         <option value="luonto">luonto</option>
         <option value="muu">muu</option>
-
       </select>
     </p>
 
