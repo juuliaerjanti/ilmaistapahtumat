@@ -45,29 +45,27 @@ def edit_event(event_id, title, description, date, time, location):
     db.execute(sql, [title, description, date, time, location, event_id])
 
 def remove_event(event_id):
-    # Poista ensin tapahtumaan liittyvät kommentit
     sql = "DELETE FROM comments WHERE event_id = ?"
     db.execute(sql, [event_id])
 
-    # Poista tapahtumaan liittyvät luokat
     sql = "DELETE FROM event_classes WHERE event_id = ?"
     db.execute(sql, [event_id])
 
-    # Poista itse tapahtuma
     sql = "DELETE FROM events WHERE id = ?"
     db.execute(sql, [event_id])
 
-
 def find_events(query):
-    sql = """SELECT id, title
+    sql = """SELECT DISTINCT events.id, events.title, events.date
             FROM events
-            WHERE description LIKE ?
-            OR title LIKE ?
-            OR time LIKE ?
-            OR date LIKE ?
-            ORDER BY id DESC"""
+            LEFT JOIN event_classes ON events.id = event_classes.event_id
+            WHERE events.description LIKE ?
+            OR events.title LIKE ?
+            OR events.time LIKE ?
+            OR events.date LIKE ?
+            OR event_classes.title LIKE ?
+            ORDER BY events.id DESC"""
     res = "%" + query + "%"
-    return db.query(sql, [res, res, res, res])
+    return db.query(sql, [res, res, res, res, res])
 
 def update_image(event_id, image):
     sql = "UPDATE events SET image = ? WHERE id = ?"
