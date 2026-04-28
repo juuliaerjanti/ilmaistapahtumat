@@ -32,4 +32,16 @@
 </div>
 {% endfor %}
 
+<div class="pagination">
+  <p>Sivu {{ page }} / {{ page_count }}</p>
+  
+  {% if page > 1 %}
+    <a href="/page/{{ page - 1 }}">Edellinen</a>
+  {% endif %}
+  
+  {% if page < page_count %}
+    <a href="/page/{{ page + 1 }}">Seuraava</a>
+  {% endif %}
+</div>
+
 {% endblock %}

@@ -193,3 +193,15 @@ def get_image(event_id):
     sql = "SELECT image FROM events WHERE id = ?"
     result = db.query(sql, [event_id])
     return result[0][0] if result else None
+
+def get_events_with_pagination(offset, page_size):
+    sql = """SELECT id, title, date, location
+             FROM events
+             ORDER BY id DESC
+             LIMIT ? OFFSET ?"""
+    return db.query(sql, [page_size, offset])
+
+def event_count():
+    sql = "SELECT COUNT(*) FROM events"
+    result = db.query(sql)
+    return result[0][0] if result else 0

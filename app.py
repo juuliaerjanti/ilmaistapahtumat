@@ -16,9 +16,44 @@ import events
 import users
 import comments
 
+from flask import g
+import time
+
+
 con = sqlite3.connect("database.db", timeout=10)
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
+
+
+@app.before_request
+def before_request():
+    g.start_time = time.time()
+
+@app.after_request
+def after_request(response):
+    elapsed_time = round(time.time() - g.start_time, 2)
+    print("elapsed time:", elapsed_time, "s")
+    return response
+
+def ensure_indexes():
+    """
+    Checks if there are indexes in database. If not, creates them.
+    """
+    db = sqlite3.connect("database.db")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_events_user_id ON events (user_id);")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_events_date ON events (date);")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_events_id ON events (id);")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_event_classes_event_id ON event_classes (event_id);")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_comments_event_id ON comments (event_id);")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_comments_user_id ON comments (user_id);")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_users_id ON users (id);")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_users_username ON users (username);")
+    db.commit()
+    db.close()
+
+ensure_indexes()
+
+
 
 def require_login():
     """
@@ -81,13 +116,44 @@ def show_lines(content):
     content = content.replace("\n", "<br />")
     return markupsafe.Markup(content)
 
+
+import math
+import events  # Oletetaan, että tämä moduuli sisältää `get_events` ja `event_count` -funktiot
+
 @app.route("/")
-def index():
+@app.route("/page/<int:page>")
+def index(page=1):
     """
-    front page
+    Displays the event list with pagination.
+
+    Args:
+        page (int): Current page number. Defaults to 1.
+
+    Returns:
+        Rendered HTML page with events for the current page.
     """
-    all_events = events.get_events()
-    return render_template("index.html", events=all_events)
+    page_size = 10  # Number of events per page
+    event_count = events.event_count()  # Total number of events in the database
+    page_count = math.ceil(event_count / page_size)  # Calculate total pages
+    page_count = max(page_count, 1)  # Ensure at least one page exists
+
+    # Redirect if the page number is out of bounds
+    if page < 1:
+        return redirect("/page/1")
+    if page > page_count:
+        return redirect(f"/page/{page_count}")
+
+    # Fetch events for the current page
+    offset = (page - 1) * page_size
+    current_events = events.get_events_with_pagination(offset, page_size)
+
+    # Render the page with event data and pagination details
+    return render_template(
+        "index.html",
+        page=page,
+        page_count=page_count,
+        events=current_events
+    )
 
 @app.route("/user/<int:user_id>")
 def show_user(user_id):
