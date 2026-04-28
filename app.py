@@ -100,7 +100,8 @@ def show_user(user_id):
     user_events = users.get_events(user_id)
     user_comments = users.get_user_comments(user_id)
 
-    return render_template("show_user.html", user=user, events=user_events, user_comments=user_comments)
+    return render_template("show_user.html", 
+                           user=user, events=user_events, user_comments=user_comments)
 
 
 @app.route("/find_event")
@@ -177,7 +178,9 @@ def update_event(event_id):
 
 @app.route("/new_event")
 def new_event():
-
+    """
+    Function for filling new_event if error
+    """
     require_login()
     empty = {
         "title": "",
@@ -261,7 +264,7 @@ def remove_event(event_id):
                 return redirect("/")
             else:
                 return redirect("/event/" + str(event_id))
-        except Exception as e:
+        except Exception:
             flash("Tapahtuman poistamisessa tapahtui virhe.")
             return redirect("/event/" + str(event_id))
 
@@ -293,7 +296,6 @@ def create():
         filled = {"username": username}
         return render_template("register.html", filled=filled)
 
-
     return render_template("registration_success.html", username=username)
 
 
@@ -302,7 +304,6 @@ def login():
     """
     Function for logging in
     """
-
     if request.method == "GET":
         next_page = request.args.get("next", request.referrer or "/")
         return render_template("login.html", filled={}, next_page=next_page)
