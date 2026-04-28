@@ -23,7 +23,7 @@
   </p>
   <p>
     Päivämäärä (dd.mm.yyyy): <br />
-    <input type="text" name="date" size="10" value="{{ event.date }}" />
+    <input type="date" name="date" size="10" value="{{ event.date }}" />
   </p>
   <p>
     Kellonaika: <br />
@@ -32,6 +32,25 @@
   <p>
     Sijainti: <br />
     <input type="text" name="location" size="20" value="{{ event.location }}" maxlength="100" required />
+  </p>
+  <p>
+    Tapahtuman tyyppi: <br />
+    <select name="section" multiple>
+      <option value="">(valitse)</option>
+      <option value="askartelu" {% if "askartelu" in classes %}selected{% endif %}>päihteetön</option>
+      <option value="musiikki" {% if "musiikki" in classes %}selected{% endif %}>musiikki</option>
+      <option value="teatteri" {% if "teatteri" in classes %}selected{% endif %}>teatteri</option>
+      <option value="urheilu" {% if "urheilu" in classes %}selected{% endif %}>urheilu</option>
+      <option value="ruoka" {% if "ruoka" in classes %}selected{% endif %}>ruoka</option>
+      <option value="tanssi" {% if "tanssi" in classes %}selected{% endif %}>tanssi</option>
+      <option value="maalaustaide" {% if "maalaustaide" in classes %}selected{% endif %}>maalaustaide</option>
+      <option value="lautapelit" {% if "lautapelit" in classes %}selected{% endif %}>lautapelit</option>
+      <option value="kirjallisuus" {% if "kirjallisuus" in classes %}selected{% endif %}>kirjallisuus</option>
+      <option value="elokuvat" {% if "elokuvat" in classes %}selected{% endif %}>elokuvat</option>
+      <option value="keramiikka" {% if "keramiikka" in classes %}selected{% endif %}>keramiikka</option>
+      <option value="luonto" {% if "luonto" in classes %}selected{% endif %}>luonto</option>
+      <option value="muu" {% if "muu" in classes %}selected{% endif %}>muu</option>
+    </select>
   </p>
 
   <input type="hidden" name="event_id" value="{{ event.id }}">

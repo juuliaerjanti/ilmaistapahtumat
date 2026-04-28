@@ -28,7 +28,16 @@ def validate_event_data(title, description, time, date, location):
         return False
     if not location or len(location) > 100:
         return False
+
+    try:
+        event_date = datetime.strptime(date, "%d.%m.%Y")
+        if event_date < datetime.now():
+            return False
+    except ValueError:
+        return False
+
     return True
+
 
 def filled_event(title, description, date, time, location):
     filled = {
@@ -86,17 +95,17 @@ def page(event_id): #show_event()
 @app.route("/update_event/<int:event_id>", methods=["GET", "POST"])
 def update_event(event_id):
     require_login()
+    event = events.get_event(event_id)
     if request.method == "GET":
-        event = events.get_event(event_id)
+        classes = events.get_classes(event_id)
         if not event:
             abort(404)
         if event["user_id"] != session["user_id"]:
             abort(403)
-        return render_template("edit_event.html", event=event)
+        return render_template("edit_event.html", event=event, classes=classes)
 
     check_csrf()
     if request.method == "POST":
-        event_id = request.form["event_id"]
         event = events.get_event(event_id)
         if not event:
             abort(404)
@@ -107,6 +116,7 @@ def update_event(event_id):
         time = request.form["time"]
         date_raw = request.form["date"]
         location = request.form["location"]
+        classes = request.form.getlist("section")
 
         try:
             date = datetime.strptime(date_raw, "%Y-%m-%d").strftime("%d.%m.%Y")
@@ -116,8 +126,13 @@ def update_event(event_id):
 
         if validate_event_data(title, description, time, date, location):
             events.edit_event(event_id, title, description, date, time, location)
+            events.update_classes(event_id, classes)  # Päivitetään luokat
 
+            flash("Tapahtuma päivitetty onnistuneesti.")
             return redirect("/event/" + str(event_id))
+        else:
+            flash("VIRHE: Tarkista syötteesi.")
+            return redirect(f"/update_event/{event_id}")
 
 @app.route("/new_event")
 def new_event():
@@ -230,7 +245,8 @@ def create():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html", filled={})
+        next_page = request.args.get("next", request.referrer or "/")
+        return render_template("login.html", filled={}, next_page=next_page)
 
     if request.method == "POST":
         username = request.form["username"]
@@ -258,6 +274,9 @@ def logout():
 
 @app.route("/add_comment/<int:event_id>", methods=["POST"])
 def add_comment(event_id):
+    if "user_id" not in session:
+        flash("Sinun täytyy olla kirjautuneena kommentoidaksesi tapahtumia.")
+        return redirect("/login")
     require_login()
     check_csrf()
     comment = request.form["comment"]

@@ -5,11 +5,7 @@
 {% block content %}
 <h2>Tapahtumailmoituksen poisto</h2>
 
-{% for message in get_flashed_messages() %}
-<p class="info">
-  {{ message }}
-</p>
-{% endfor %}
+
 
 <p>Tapahtuma: {{ event.title }}</p>
 <p>Haluatko varmasti poistaa tämän tapahtuman?</p>

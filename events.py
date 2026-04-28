@@ -53,6 +53,15 @@ def edit_event(event_id, title, description, date, time, location):
                             WHERE id = ?"""
     db.execute(sql, [title, description, date, time, location, event_id])
 
+def update_classes(event_id, classes):
+    sql = "DELETE FROM event_classes WHERE event_id = ?"
+    db.execute(sql, [event_id])
+
+    sql = "INSERT INTO event_classes (event_id, title) VALUES (?, ?)"
+    for title in classes:
+        db.execute(sql, [event_id, title])
+
+
 def remove_event(event_id):
     sql = "DELETE FROM comments WHERE event_id = ?"
     db.execute(sql, [event_id])

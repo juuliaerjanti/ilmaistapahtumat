@@ -18,7 +18,7 @@
 </p>
 {% endif %}
 
-<p>{{ event.description }}</p>
+<p>{{ event.description | show_lines }}</p>
 <p>Päivämäärä (dd.mm.yyyy): {{ event.date }}</p>
 <p>Sijainti: {{ event.location }}</p>
 <p>Kellonaika: {{ event.time }}</p>
@@ -38,7 +38,7 @@
 <h2>Kommentit</h2>
 <ul>
   {% for comment in comments %}
-  <li><strong>{{ comment.username }}:</strong> {{ comment.comment }}</li>
+  <li><strong>{{ comment.username }}:</strong> {{ comment.comment | show_lines }}</li>
   {% endfor %}
 </ul>
 
