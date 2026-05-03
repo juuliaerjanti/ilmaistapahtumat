@@ -49,9 +49,9 @@ def check_csrf():
     Checks for csrf. If it doesn't exist, returns an HTTP 403 error.
     """
     if "csrf_token" not in request.form:
-        abort(403)  # Token puuttuu
+        abort(403)
     if request.form["csrf_token"] != session.get("csrf_token"):
-        abort(403)  # Token ei täsmää
+        abort(403)
 
 
 def validate_event_data(title, description, date, location):
@@ -100,7 +100,7 @@ def show_lines(content):
 
 
 import math
-import events  # Oletetaan, että tämä moduuli sisältää `get_events` ja `event_count` -funktiot
+import events
 
 @app.route("/")
 @app.route("/page/<int:page>")
@@ -114,22 +114,19 @@ def index(page=1):
     Returns:
         Rendered HTML page with events for the current page.
     """
-    page_size = 10  # Number of events per page
-    event_count = events.event_count()  # Total number of events in the database
-    page_count = math.ceil(event_count / page_size)  # Calculate total pages
-    page_count = max(page_count, 1)  # Ensure at least one page exists
+    page_size = 10
+    event_count = events.event_count()
+    page_count = math.ceil(event_count / page_size)
+    page_count = max(page_count, 1)
 
-    # Redirect if the page number is out of bounds
     if page < 1:
         return redirect("/page/1")
     if page > page_count:
         return redirect(f"/page/{page_count}")
 
-    # Fetch events for the current page
     offset = (page - 1) * page_size
     current_events = events.get_events_with_pagination(offset, page_size)
 
-    # Render the page with event data and pagination details
     return render_template(
         "index.html",
         page=page,
@@ -207,6 +204,18 @@ def update_event(event_id):
         date_raw = request.form["date"]
         location = request.form["location"]
         classes = request.form.getlist("section")
+        image = request.files.get("image")
+        image_blob = None
+
+        if image and image.filename != "":
+            if not image.filename.endswith(".jpg"):
+                flash("VIRHE: Väärä tiedostotyyppi. Vain .jpg-tiedostot ovat sallittuja.")
+                return redirect(f"/update_event/{event_id}")
+
+            image_blob = image.read()
+            if len(image_blob) > 100 * 1024:  # 100 KB max size
+                flash("VIRHE: Liian suuri kuva. Maksimikoko on 100 KB.")
+                return redirect(f"/update_event/{event_id}")
 
         try:
             date = datetime.strptime(date_raw, "%Y-%m-%d").strftime("%d.%m.%Y")
@@ -215,8 +224,8 @@ def update_event(event_id):
             return redirect(f"/update_event/{event_id}")
 
         if validate_event_data(title, description, date, location):
-            events.edit_event(event_id, title, description, date, time, location)
-            events.update_classes(event_id, classes)  # Päivitetään luokat
+            events.edit_event(event_id, title, description, date, time, location, image_blob)
+            events.update_classes(event_id, classes)
 
             flash("Tapahtuma päivitetty onnistuneesti.")
             return redirect("/event/" + str(event_id))
@@ -440,6 +449,6 @@ def show_event_image(event_id):
     if not image:
         abort(404)
 
-    response = make_response(bytes(image))
+    response = make_response(image)
     response.headers.set("Content-Type", "image/jpeg")
     return response

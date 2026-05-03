@@ -94,21 +94,23 @@ def get_event(event_id):
     return result[0] if result else None
 
 
-def edit_event(event_id, title, description, date, time, location):
+def edit_event(event_id, title, description, date, time, location, image_blob=None):
     """
     Updates an event's details in the database.
 
     Args:
-        event_data (EventData): Data for the event.
+        event_data: Data for the event.
     """
 
-    sql = """UPDATE events SET title = ?,
-                                description = ?,
-                                date = ?,
-                                time = ?,
-                                location = ?
-                            WHERE id = ?"""
-    db.execute(sql, [title, description, date, time, location, event_id])
+    if image_blob:
+        sql = """UPDATE events SET title = ?, description = ?, date = ?, time = ?, location = ?, image = ?
+                 WHERE id = ?"""
+        db.execute(sql, [title, description, date, time, location, image_blob, event_id])
+    else:
+        sql = """UPDATE events SET title = ?, description = ?, date = ?, time = ?, location = ?
+                 WHERE id = ?"""
+        db.execute(sql, [title, description, date, time, location, event_id])
+
 
 def update_classes(event_id, classes):
     """
@@ -182,9 +184,6 @@ def update_image(event_id, image):
 def get_image(event_id):
     """
     Retrieves the image associated with a specific event.
-
-    Args:
-        event_id (int): ID of the event.
 
     Returns:
         bytes or None: Binary data for the image if found, otherwise None.
